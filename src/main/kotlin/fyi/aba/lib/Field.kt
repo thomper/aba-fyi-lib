@@ -121,7 +121,7 @@ class BSBFillerField(name: String, text: String, requiredLength: Int): Field(nam
 
 fun buildField(constructor: (String, String, Int) -> Field, name: String, range: IntRange, line: String): Field {
     if (range.first < 0 || range.last < 0 || range.first >= line.length || range.last >= line.length) {
-        throw StringIndexOutOfBoundsException("Line had length ${line.length} but substring range was $range")
+        throw StringIndexOutOfBoundsException("Substring range $range outside of line with length ${line.length}")
     }
     return constructor(name, line.substring(range), range.count())
 }
