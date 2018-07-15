@@ -72,10 +72,11 @@ class DateField(name: String, text: String, requiredLength: Int): Field(name, te
 class BSBField(name: String, text: String, requiredLength: Int): Field(name, text, requiredLength) {
     override fun errors(): List<String> {
         return lengthErrors() + when {
-            text.isNotEmpty() &&
-                    (text[3] != '-' ||
-                     text.filter { it != '-' }.length != 6 ||
-                     text.filter { it != '-' }.map { !it.isDigit() }.any()) -> return listOf("Expected BSB number format (NNN-NNN) but got '$text'")
+            text.isNotEmpty() && !listOf(
+                    text[3] == '-',
+                    text.filter { it != '-' }.length == 6,
+                    text.filter { it != '-' }.all { it.isDigit() }
+            ).all{ it } -> return listOf("Expected BSB number format (NNN-NNN) but got '$text'")
             else -> listOf<String>()
         }
     }
