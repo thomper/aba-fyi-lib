@@ -57,14 +57,18 @@ class LeftJustifiedField(name: String, text: String, requiredLength: Int): Field
 }
 
 class DateField(name: String, text: String, requiredLength: Int): Field(name, text, requiredLength) {
+    // TODO: SimpleDateFormat is too accepting when an invalid day or month is present, need to replace it with something better
     override fun errors(): List<String> {
-        val dateFormat = SimpleDateFormat("DDmmyy")
+        val dateFormat = SimpleDateFormat("ddmmyy")
         dateFormat.isLenient = false
-        return lengthErrors() + try {
-            dateFormat.parse(text)
-            listOf<String>()
-        } catch (error: ParseException) {
-            listOf("Expected date informat DDMMYY but got '$text'")
+        return lengthErrors() +  when {
+            text.any { !it.isDigit() } -> listOf("Expected date in format ddmmyy but got $text")
+            else -> try {
+                dateFormat.parse(text)
+                listOf<String>()
+            } catch (error: ParseException) {
+                listOf("Expected date in format ddmmyy but got '$text'")
+            }
         }
     }
 }
@@ -85,8 +89,9 @@ class BSBField(name: String, text: String, requiredLength: Int): Field(name, tex
 class AccountNumberField(name: String, text: String, requiredLength: Int): Field(name, text, requiredLength) {
     override fun errors(): List<String> {
         return lengthErrors() + when {
-            text.isNotEmpty() && text.any { !it.isDigit() && it != '-' } -> listOf("Expected only numbers and '-' but got '$text'")
-            text.isNotEmpty() && text.filter { it != '-' }.all { it == '0' } -> listOf("Account number cannot be all zeroes, was '$text'")
+            text.isNotEmpty() && text.any { !it.isDigit() && it != '-' && it != ' ' } -> listOf("Expected only integers, spaces, and '-' but got '$text'")
+            text.isNotEmpty() && text.filter { it != '-' && it != ' ' }.all { it == '0' } -> listOf("Account number cannot be all zeroes, was '$text'")
+            text.isNotEmpty() && text.contains(' ') && text.trimStart().contains(' ') -> listOf("Account number must be right-justified, was '$text'")
             else -> listOf()
         }
     }

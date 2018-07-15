@@ -42,7 +42,7 @@ val TOTAL_FIELD_TEXT = mapOf("record type" to "7",
         "descriptive record count" to "000021",
         "third blank field" to "                                        ")
 
-class TestField : StringSpec() {
+class TestRecord : StringSpec() {
     init {
         "field split descriptive record" {
             val fields = DescriptiveRecord(DESCRIPTIVE_LINE).fields
@@ -63,3 +63,5 @@ class TestField : StringSpec() {
         }
     }
 }
+
+
