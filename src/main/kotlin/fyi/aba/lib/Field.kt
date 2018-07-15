@@ -29,7 +29,7 @@ class BlankField(name: String, text: String, requiredLength: Int): Field(name, t
     }
 }
 
-class IntegerField(name: String, text: String, requiredLength: Int): Field(name, text, requiredLength) {
+open class IntegerField(name: String, text: String, requiredLength: Int): Field(name, text, requiredLength) {
     override fun errors(): List<String> {
         return lengthErrors() + when {
             text.isNotEmpty() && text.any { !it.isDigit() } -> listOf("Expected an integer but got '$text'")
@@ -38,10 +38,9 @@ class IntegerField(name: String, text: String, requiredLength: Int): Field(name,
     }
 }
 
-class NonZeroIntegerField(name: String, text: String, requiredLength: Int): Field(name, text, requiredLength) {
+class NonZeroIntegerField(name: String, text: String, requiredLength: Int): IntegerField(name, text, requiredLength) {
     override fun errors(): List<String> {
-        return lengthErrors() + when {
-            text.isNotEmpty() && text.any { !it.isDigit() } -> listOf("Expected an integer but got '$text'")
+        return super.errors() + when {
             text.isNotEmpty() && text.all { it in "0 " } -> listOf("Expected integer greater than 0 but got '$text'")
             else -> listOf()
         }
