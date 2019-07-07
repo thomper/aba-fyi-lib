@@ -91,7 +91,7 @@ class AccountNumberField(name: String, text: String, requiredLength: Int): Field
         return lengthErrors() + when {
             text.isNotEmpty() && text.any { !it.isDigit() && it != '-' && it != ' ' } -> listOf("Expected only integers, spaces, and '-' but got '$text'")
             text.isNotEmpty() && text.filter { it != '-' && it != ' ' }.all { it == '0' } -> listOf("Account number cannot be all zeroes, was '$text'")
-            text.isNotEmpty() && text.contains(' ') && text.trimStart().contains(' ') -> listOf("Account number must be right-justified, was '$text'")
+            text.isNotEmpty() && text.trimStart().contains(' ') -> listOf("Account number must be right-justified, was '$text'")
             else -> listOf()
         }
     }
@@ -124,7 +124,7 @@ class BSBFillerField(name: String, text: String, requiredLength: Int): Field(nam
     }
 }
 
-fun buildField(constructor: (String, String, Int) -> Field, name: String, range: IntRange, line: String): Field {
+fun buildField(name: String, constructor: (String, String, Int) -> Field, range: IntRange, line: String): Field {
     if (range.first < 0 || range.last < 0 || range.first >= line.length || range.last >= line.length) {
         throw StringIndexOutOfBoundsException("Substring range $range outside of line with length ${line.length}")
     }

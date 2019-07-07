@@ -23,5 +23,9 @@ class TestBSBField : StringSpec() {
         "too few integers" {
             BSBField("test", "012-34", 6).errors().size shouldBe 1
         }
+
+        "too many hyphens" {
+            BSBField("test", "0-2-345", 6).errors().size shouldBe 1
+        }
     }
 }
